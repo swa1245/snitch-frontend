@@ -24,3 +24,13 @@ export const Login = async({email,password})=>{
     })
     return res.data
 }
+
+export const GetMe = async()=>{
+    const res = await authApiInstance.get('/me')
+    return res.data
+}
+
+export const Logout = async()=>{
+    const res = await authApiInstance.get('/logout')
+    return res.data
+}

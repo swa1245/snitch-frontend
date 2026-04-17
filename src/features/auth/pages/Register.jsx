@@ -1,11 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import fashionHero from '../../../assets/fashion-hero.png';
+import React, { useState } from 'react';
+import fashionHero from '../../../assets/vibrant-hero.png';
 import { useAuth } from '../hook/useAuth';
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Navigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
 const Register = () => {
   const { handelRegsiter } = useAuth()
   const navigate = useNavigate()
+  const { user } = useSelector((state) => state.auth);
 
   const [formData, setFormData] = useState({
     fullName: '',
@@ -14,6 +16,10 @@ const Register = () => {
     password: '',
     isSeller: false,
   });
+
+  if (user) {
+    return <Navigate to="/" replace />;
+  }
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -30,56 +36,56 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#050505] text-white flex flex-col lg:flex-row font-sans selection:bg-[#FFD700] selection:text-black">
+    <div className="min-h-screen bg-[#f5f5f756] text-[#1A1A1A] flex flex-col lg:flex-row font-sans selection:bg-black selection:text-white">
 
       {/* Left Column: Visual Brand Identity */}
       <div className="hidden lg:flex lg:w-1/2 relative h-screen overflow-hidden group">
         <img
           src={fashionHero}
           alt="Snitch Fashion Hero"
-          className="absolute inset-0 w-full h-full object-cover grayscale-20 group-hover:scale-105 transition-transform duration-3000 ease-out"
+          className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-3000 ease-out"
         />
-        <div className="absolute inset-0 bg-linear-to-t from-[#050505] via-transparent to-black/40"></div>
+        <div className="absolute inset-0 bg-linear-to-t from-black/30 via-transparent to-transparent"></div>
 
         {/* Brand Overlay */}
         <div className="absolute top-12 left-12">
-          <h1 className="text-4xl font-black tracking-tighter uppercase italic">
+          <h1 className="text-4xl font-black tracking-tighter uppercase italic text-white drop-shadow-lg">
             Snitch<span className="text-[#FFD700]">.</span>
           </h1>
-          <p className="text-[10px] tracking-[0.4em] text-white/60 font-mono mt-1 uppercase">BENGALURU • MUMBAI • DELHI</p>
+          <p className="text-[10px] tracking-[0.4em] text-white/90 font-mono mt-1 uppercase">BENGALURU • MUMBAI • DELHI</p>
         </div>
 
         <div className="absolute bottom-12 left-12 space-y-2">
-          <p className="text-4xl font-bold tracking-tight max-w-sm leading-[0.9]">
+          <p className="text-4xl font-bold tracking-tight max-w-sm leading-[0.9] text-white drop-shadow-xl">
             REDEFINING <br /> <span className="text-[#FFD700]">INDIAN</span> LUXURY.
           </p>
-          <p className="text-xs text-white/40 font-mono">001 - BHARATIYA DESIGN HOUSE</p>
+          <p className="text-xs text-white/80 font-mono">001 - BHARATIYA DESIGN HOUSE</p>
         </div>
 
         {/* Vertical Marquee */}
         <div className="absolute right-6 top-0 bottom-0 flex items-center overflow-hidden pointer-events-none">
-          <div className="whitespace-nowrap vertical-text animate-marquee-vertical text-[10px] font-sans tracking-widest text-white/10 uppercase opacity-50">
+          <div className="whitespace-nowrap vertical-text animate-marquee-vertical text-[10px] font-sans tracking-widest text-white/30 uppercase">
             MADE IN INDIA • LIMITED DROP • SNITCH EXCLUSIVE • DESI STREETWEAR • &nbsp;
           </div>
         </div>
       </div>
 
       {/* Right Column: Minimalist Registration */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 md:p-20 relative overflow-hidden bg-[#0A0A0A]">
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 md:p-20 relative overflow-hidden bg-white">
 
         {/* Decorative elements */}
         <div className="absolute top-10 right-10 hidden md:block">
-          <p className="text-[10px] font-mono text-[#FFD700]/40">MOD: RG-0410</p>
+          <p className="text-[10px] font-mono text-gray-400">MOD: RG-0410</p>
         </div>
 
         <div className="w-full max-w-sm space-y-12 z-10">
 
           <div className="space-y-4">
-            <h2 className="text-3xl font-bold tracking-tight flex items-center">
+            <h2 className="text-4xl font-bold tracking-tight flex items-center text-[#FFD700]" style={{ fontFamily: '"Playfair Display", serif' }}>
               Sign Up
-              <span className="ml-4 h-px grow bg-white/10"></span>
+              <span className="ml-4 h-px grow bg-gray-100"></span>
             </h2>
-            <p className="text-gray-500 text-sm tracking-wide">
+            <p className="text-gray-600 text-sm tracking-wide">
               Secure your spot in the next collection drop.
             </p>
           </div>
@@ -97,7 +103,7 @@ const Register = () => {
                   type="text"
                   required
                   placeholder="E.G. ARJUN MALHOTRA"
-                  className="w-full bg-transparent border-b border-white/20 py-3 text-sm focus:outline-none focus:border-[#FFD700] transition-colors placeholder:text-white/20 uppercase font-medium"
+                  className="w-full bg-transparent border-b border-gray-200 py-3 text-sm focus:outline-none focus:border-black transition-colors placeholder:text-gray-500 uppercase font-medium text-black"
                   value={formData.fullName}
                   onChange={handleChange}
                 />
@@ -113,7 +119,7 @@ const Register = () => {
                   type="email"
                   required
                   placeholder="CLIENT@DOMAIN.COM"
-                  className="w-full bg-transparent border-b border-white/20 py-3 text-sm focus:outline-none focus:border-[#FFD700] transition-colors placeholder:text-white/20 uppercase font-medium"
+                  className="w-full bg-transparent border-b border-gray-200 py-3 text-sm focus:outline-none focus:border-black transition-colors placeholder:text-gray-500 uppercase font-medium text-black"
                   value={formData.email}
                   onChange={handleChange}
                 />
@@ -129,7 +135,7 @@ const Register = () => {
                   type="tel"
                   required
                   placeholder="+91 00000 00000"
-                  className="w-full bg-transparent border-b border-white/20 py-3 text-sm focus:outline-none focus:border-[#FFD700] transition-colors placeholder:text-white/20 uppercase font-medium"
+                  className="w-full bg-transparent border-b border-gray-200 py-3 text-sm focus:outline-none focus:border-black transition-colors placeholder:text-gray-500 uppercase font-medium text-black"
                   value={formData.contactNumber}
                   onChange={handleChange}
                 />
@@ -145,7 +151,7 @@ const Register = () => {
                   type="password"
                   required
                   placeholder="••••••••••••"
-                  className="w-full bg-transparent border-b border-white/20 py-3 text-sm focus:outline-none focus:border-[#FFD700] transition-colors placeholder:text-white/20 uppercase font-medium"
+                  className="w-full bg-transparent border-b border-gray-200 py-3 text-sm focus:outline-none focus:border-black transition-colors placeholder:text-gray-500 uppercase font-medium text-black"
                   value={formData.password}
                   onChange={handleChange}
                 />
@@ -161,10 +167,10 @@ const Register = () => {
                     checked={formData.isSeller}
                     onChange={handleChange}
                   />
-                  <div className="w-10 h-5 bg-white/10 border border-white/20 rounded-full transition-colors peer-checked:bg-[#FFD700]/30 peer-checked:border-[#FFD700]"></div>
-                  <div className="absolute top-1 left-1 w-3 h-3 bg-white/60 rounded-full transition-transform peer-checked:translate-x-5 peer-checked:bg-[#FFD700]"></div>
+                  <div className="w-10 h-5 bg-gray-100 border border-gray-200 rounded-full transition-colors peer-checked:bg-black/10 peer-checked:border-black"></div>
+                  <div className="absolute top-1 left-1 w-3 h-3 bg-gray-300 rounded-full transition-transform peer-checked:translate-x-5 peer-checked:bg-black"></div>
                 </div>
-                <span className="text-[9px] font-mono tracking-widest text-white/60 group-hover/check:text-white uppercase transition-colors">
+                <span className="text-[9px] font-mono tracking-widest text-gray-400 group-hover/check:text-black uppercase transition-colors">
                   Join as a Swadeshi Merchant
                 </span>
               </label>
@@ -173,20 +179,20 @@ const Register = () => {
             <div className="pt-6 space-y-6">
               <button
                 type="submit"
-                className="w-full bg-[#FFD700] hover:bg-white text-black font-extrabold text-[11px] uppercase tracking-[0.4em] py-4 transition-all duration-500 hover:tracking-[0.6em] active:scale-[0.98] shadow-2xl brand-font"
+                className="w-full bg-[#1A1A1A] hover:bg-black text-white font-extrabold text-[11px] uppercase tracking-[0.4em] py-4 transition-all duration-500 hover:tracking-[0.6em] active:scale-[0.98] shadow-2xl brand-font rounded-sm"
               >
                 Sign Up
               </button>
 
               <div className="flex items-center gap-4 py-2">
-                <div className="h-px grow bg-white/5"></div>
-                <span className="text-[8px] font-mono text-white/20 uppercase tracking-[0.2em]">or</span>
-                <div className="h-px grow bg-white/5"></div>
+                <div className="h-px grow bg-gray-100"></div>
+                <span className="text-[8px] font-mono text-gray-500 uppercase tracking-[0.2em]">or</span>
+                <div className="h-px grow bg-gray-100"></div>
               </div>
 
               <a
                 href="/api/auth/google"
-                className="w-full flex items-center justify-center gap-3 bg-white hover:bg-white/90 text-gray-700 transition-all duration-300 py-2.5 shadow-md group border border-transparent"
+                className="w-full flex items-center justify-center gap-3 bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 transition-all duration-300 py-2.5 group rounded-sm"
               >
                 <div className="bg-white p-2 rounded-sm mr-1">
                   <svg width="18" height="18" viewBox="0 0 18 18">
@@ -198,8 +204,8 @@ const Register = () => {
                 </div>
                 <span className="text-[11px] font-sans font-medium text-[#1f1f1f]">Continue with Google</span>
               </a>
-              <p className="mt-8 text-center text-[8px] font-mono text-white/40 tracking-[0.3em] uppercase">
-                By joining, you agree to our <a href="#" className="border-b border-white/20 hover:text-white transition-colors">House Terms</a>
+              <p className="mt-8 text-center text-[8px] font-mono text-gray-600 tracking-[0.3em] uppercase">
+                By joining, you agree to our <a href="#" className="border-b border-gray-200 hover:text-black transition-colors text-black">House Terms</a>
               </p>
             </div>
           </form>
@@ -207,7 +213,7 @@ const Register = () => {
           {/* Footer Mobile Only */}
           <div className="lg:hidden text-center pt-10">
             <h1 className="text-xl font-black tracking-tighter uppercase italic">
-              Snitch<span className="text-[#FFD700]">.</span>
+              Snitch<span className="text-gray-400">.</span>
             </h1>
           </div>
         </div>

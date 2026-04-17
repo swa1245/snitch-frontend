@@ -17,18 +17,20 @@ const SellerProducts = () => {
       {/* Top Bar */}
       <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-8 py-5 border-b border-gray-200 bg-white/80 backdrop-blur-sm">
         <h1
-          className="text-xl font-black tracking-tighter uppercase italic cursor-pointer"
+          className="text-2xl font-black tracking-tighter uppercase cursor-pointer"
           onClick={() => navigate('/')}
+          style={{ fontFamily: '"Playfair Display", serif' }}
         >
           Snitch<span className="text-[#FFD700]">.</span>
         </h1>
         <div className="flex items-center gap-6">
-          <p className="text-[10px] font-mono text-gray-400 tracking-[0.3em] uppercase hidden md:block">
+          <p className="text-[10px] font-mono text-[#FFD700] tracking-[0.4em] uppercase hidden md:block font-bold">
             CONSOLA : SELLER
           </p>
           <button
             onClick={() => navigate('/seller/products/create')}
-            className="bg-black hover:bg-gray-800 text-white font-extrabold text-[10px] uppercase tracking-[0.3em] px-5 py-2.5 transition-all duration-300 rounded-sm shadow-xl hover:scale-[1.02] active:scale-[0.98]"
+            className="bg-black hover:bg-gray-800 text-white font-bold text-[11px] uppercase tracking-[0.3em] px-6 py-3 transition-all duration-300 rounded-sm shadow-xl hover:scale-[1.02] active:scale-[0.98]"
+            style={{ fontFamily: '"Playfair Display", serif' }}
           >
             + Initiate Drop
           </button>
@@ -54,13 +56,13 @@ const SellerProducts = () => {
           <div className="flex gap-12 border-l border-gray-200 pl-8 h-fit">
             <div className="space-y-1">
               <p className="text-[9px] font-mono text-gray-400 tracking-widest uppercase">Total Assets</p>
-              <p className="text-2xl font-bold">{sellerProducts.length}</p>
+              <p className="text-3xl font-bold" style={{ fontFamily: '"Playfair Display", serif' }}>{sellerProducts.length}</p>
             </div>
             <div className="space-y-1">
               <p className="text-[9px] font-mono text-gray-400 tracking-widest uppercase">Live Status</p>
               <div className="flex items-center gap-2">
-                <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-                <p className="text-2xl font-bold">Active</p>
+                <span className="w-2.5 h-2.5 bg-green-500 rounded-full animate-pulse" />
+                <p className="text-3xl font-bold" style={{ fontFamily: '"Playfair Display", serif' }}>Active</p>
               </div>
             </div>
           </div>
@@ -161,7 +163,7 @@ const ProductCard = ({ product, index }) => {
       {/* Content Identity */}
       <div className="pt-4 space-y-2">
         <div className="flex justify-between items-start">
-          <h3 className="text-sm font-bold uppercase tracking-widest text-[#1A1A1A] truncate max-w-[70%]">
+          <h3 className="text-base font-bold text-[#1A1A1A] truncate max-w-[70%]" style={{ fontFamily: '"Playfair Display", serif' }}>
             {product.title}
           </h3>
           <span className="text-black font-black text-sm font-mono">

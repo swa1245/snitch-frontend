@@ -4,7 +4,7 @@ import { useProduct } from '../hook/useProduct';
 
 const CreateProduct = () => {
   const navigate = useNavigate();
-  const { handleCreateProduct, loading, error, createSuccess } = useProduct();
+  const { handleCreateProduct, loading, error } = useProduct();
   const fileInputRef = useRef(null);
 
   const [formData, setFormData] = useState({
@@ -54,172 +54,198 @@ const CreateProduct = () => {
       {/* Top Bar */}
       <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-8 py-5 border-b border-gray-200 bg-white/80 backdrop-blur-sm">
         <h1
-          className="text-xl font-black tracking-tighter uppercase italic cursor-pointer"
+          className="text-2xl font-black tracking-tighter uppercase cursor-pointer"
           onClick={() => navigate('/')}
+          style={{ fontFamily: '"Playfair Display", serif' }}
         >
           Snitch<span className="text-[#FFD700]">.</span>
         </h1>
-        <p className="text-[10px] font-mono text-gray-400 tracking-[0.3em] uppercase">
-          MOD: CR-PROD
+        <p className="text-[10px] font-mono text-[#FFD700] tracking-[0.4em] uppercase font-bold">
+          PRÓTOKOL : DROP
         </p>
       </header>
 
-      <main className="pt-28 pb-20 px-6 md:px-16 lg:px-28 max-w-3xl mx-auto">
-        <div className="space-y-4 mb-14">
-          <h2 className="text-4xl font-bold tracking-tight flex items-center gap-4 text-[#FFD700]" style={{ fontFamily: '"Playfair Display", serif' }}>
-            New Drop
-            <span className="h-px grow bg-gray-200" />
-          </h2>
-          <p className="text-gray-500 text-sm tracking-wide">
-            List your next exclusive on the Snitch marketplace.
+      <main className="pt-32 pb-20 px-6 md:px-12 lg:px-20 max-w-[1400px] mx-auto">
+        {/* Editorial Header */}
+        <div className="mb-16 space-y-4">
+          <p className="text-[10px] font-mono text-[#FFD700] tracking-[0.4em] uppercase font-bold">
+            Asset Manifestation
           </p>
+          <h2 className="text-5xl md:text-6xl font-bold tracking-tighter" style={{ fontFamily: '"Playfair Display", serif' }}>
+            New Drop
+          </h2>
+          <div className="h-px w-32 bg-[#FFD700]" />
         </div>
 
         {error && (
-          <div className="mb-8 px-4 py-3 border border-red-500/30 bg-red-50/50 text-red-600 text-xs font-mono tracking-widest uppercase">
+          <div className="mb-8 px-6 py-4 border border-red-200 bg-red-50 text-red-600 text-xs font-mono tracking-widest uppercase rounded-sm">
             {error}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-10 bg-white p-8 md:p-12 shadow-sm rounded-sm">
-          {/* Title */}
-          <div className="space-y-1">
-            <label className="text-[9px] font-sans font-medium tracking-[0.3em] text-[#FFD700] uppercase">
-              Product Title
-            </label>
-            <input
-              name="title"
-              type="text"
-              required
-              placeholder="E.G. OVERSIZED KURTA DROP 001"
-              className="w-full bg-transparent border-b border-gray-200 py-3 text-sm focus:outline-none focus:border-black transition-colors placeholder:text-gray-400 uppercase font-medium text-black"
-              value={formData.title}
-              onChange={handleChange}
-            />
+        <form onSubmit={handleSubmit} className="flex flex-col lg:flex-row gap-16">
+          {/* Left Column: Media Configuration */}
+          <div className="lg:w-1/2 space-y-8">
+            <div className="bg-white p-8 border border-gray-200 shadow-sm rounded-sm">
+              <div className="flex justify-between items-center mb-8">
+                <h3 className="text-[10px] font-mono text-gray-400 tracking-[0.3em] uppercase">Visual Assets</h3>
+                <span className="text-[10px] font-mono text-[#FFD700] font-bold uppercase">{previews.length} / 7</span>
+              </div>
+
+              <div
+                onClick={() => fileInputRef.current?.click()}
+                className="group relative aspect-video border border-dashed border-gray-300 hover:border-black transition-all duration-500 cursor-pointer flex flex-col items-center justify-center gap-4 bg-gray-50 overflow-hidden"
+              >
+                <div className="z-10 text-center space-y-2">
+                  <span className="text-4xl group-hover:scale-125 transition-transform inline-block">📸</span>
+                  <p className="text-[9px] font-mono text-gray-400 tracking-widest uppercase group-hover:text-black transition-colors">
+                    Upload High-Res Media
+                  </p>
+                </div>
+                <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-5 transition-opacity" />
+              </div>
+
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                multiple
+                className="hidden"
+                onChange={handleFileChange}
+              />
+
+              {/* Dynamic Preview Grid */}
+              {previews.length > 0 && (
+                <div className="grid grid-cols-3 gap-4 mt-8">
+                  {previews.map((src, idx) => (
+                    <div key={idx} className="relative group aspect-square overflow-hidden bg-gray-100 border border-gray-200">
+                      <img
+                        src={src}
+                        alt={`preview-${idx}`}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                      />
+                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveImage(idx)}
+                          className="text-white text-[10px] uppercase tracking-widest font-bold hover:text-red-400"
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className="p-8 bg-black text-white space-y-4 rounded-sm shadow-xl">
+              <h4 className="text-[10px] font-mono text-[#FFD700] tracking-[0.3em] uppercase">Launch Strategy</h4>
+              <p className="text-xs text-gray-400 leading-relaxed uppercase tracking-tight font-medium">
+                Ensure your product titles are clear and descriptions capture the soul of the collection. Quality media drives 85% more conversion.
+              </p>
+            </div>
           </div>
 
-          {/* Description */}
-          <div className="space-y-1">
-            <label className="text-[9px] font-sans font-medium tracking-[0.3em] text-[#FFD700] uppercase">
-              Description
-            </label>
-            <textarea
-              name="description"
-              required
-              rows={6}
-              placeholder="TELL THE STORY BEHIND THIS DROP..."
-              className="w-full bg-transparent border-b border-gray-200 py-3 text-sm focus:outline-none focus:border-black transition-colors placeholder:text-gray-400 uppercase font-medium resize-none text-black"
-              value={formData.description}
-              onChange={handleChange}
-            />
-          </div>
-
-          {/* Price */}
-          <div className="grid grid-cols-2 gap-8">
-            <div className="space-y-1">
-              <label className="text-[9px] font-sans font-medium tracking-[0.3em] text-[#FFD700] uppercase">
-                Price
+          {/* Right Column: Information Protocol */}
+          <div className="lg:w-1/2 space-y-10 bg-white p-10 md:p-14 border border-gray-200 shadow-sm rounded-sm">
+            <h3 className="text-[10px] font-mono text-gray-400 tracking-[0.3em] uppercase mb-10">Information Protocol</h3>
+            
+            {/* Title */}
+            <div className="space-y-2 group">
+              <label className="text-[9px] font-sans font-medium tracking-[0.3em] text-[#FFD700] uppercase block">
+                Product Title
               </label>
               <input
-                name="priceAmount"
-                type="number"
+                name="title"
+                type="text"
                 required
-                min="1"
-                placeholder="999"
-                className="w-full bg-transparent border-b border-gray-200 py-3 text-sm focus:outline-none focus:border-black transition-colors placeholder:text-gray-400 font-medium text-black"
-                value={formData.priceAmount}
+                placeholder="E.G. OVERSIZED KURTA DROP 001"
+                className="w-full bg-transparent border-b border-gray-200 py-4 text-sm focus:outline-none focus:border-black transition-all placeholder:text-gray-400 uppercase font-medium text-black tracking-wide"
+                value={formData.title}
                 onChange={handleChange}
               />
             </div>
-            <div className="space-y-1">
-              <label className="text-[9px] font-sans font-medium tracking-[0.3em] text-[#FFD700] uppercase">
-                Currency
+
+            {/* Description */}
+            <div className="space-y-2 group">
+              <label className="text-[9px] font-sans font-medium tracking-[0.3em] text-[#FFD700] uppercase block">
+                Narrative Description
               </label>
-              <select
-                name="priceCurrency"
-                className="w-full bg-gray-50 border-b border-gray-200 py-3 text-sm focus:outline-none focus:border-black transition-colors font-medium text-black appearance-none cursor-pointer px-2"
-                value={formData.priceCurrency}
+              <textarea
+                name="description"
+                required
+                rows={8}
+                placeholder="DEFINE THE AESTHETIC..."
+                className="w-full bg-transparent border-b border-gray-200 py-4 text-sm focus:outline-none focus:border-black transition-all placeholder:text-gray-400 uppercase font-medium resize-none text-black tracking-wide leading-relaxed"
+                value={formData.description}
                 onChange={handleChange}
-              >
-                <option value="USD">USD</option>
-                <option value="EUR">EUR</option>
-                <option value="GBP">GBP</option>
-              </select>
+              />
             </div>
-          </div>
 
-          {/* Image Upload */}
-          <div className="space-y-3">
-            <label className="text-[9px] font-sans font-medium tracking-[0.3em] text-[#FFD700] uppercase">
-              Product Images (max 7)
-            </label>
-            <div
-              onClick={() => fileInputRef.current?.click()}
-              className="border border-dashed border-gray-300 hover:border-black transition-colors cursor-pointer p-8 flex flex-col items-center justify-center gap-2 group bg-gray-50"
-            >
-              <span className="text-3xl group-hover:scale-110 transition-transform">📸</span>
-              <p className="text-[10px] font-mono text-gray-400 tracking-widest uppercase">
-                Click to upload images
-              </p>
-            </div>
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              multiple
-              className="hidden"
-              onChange={handleFileChange}
-            />
-
-            {/* Previews */}
-            {previews.length > 0 && (
-              <div className="grid grid-cols-3 sm:grid-cols-4 gap-3 pt-2">
-                {previews.map((src, idx) => (
-                  <div key={idx} className="relative group aspect-square">
-                    <img
-                      src={src}
-                      alt={`preview-${idx}`}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-all duration-300"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveImage(idx)}
-                      className="absolute top-1 right-1 bg-black text-white text-[10px] w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600 rounded-full"
-                    >
-                      ✕
-                    </button>
-                  </div>
-                ))}
+            {/* Price Identity */}
+            <div className="grid grid-cols-2 gap-12">
+              <div className="space-y-2">
+                <label className="text-[9px] font-sans font-medium tracking-[0.3em] text-[#FFD700] uppercase block">
+                  Price
+                </label>
+                <div className="flex items-center gap-2 border-b border-gray-200 focus-within:border-black transition-colors">
+                  <span className="text-gray-400 font-mono text-sm leading-none">$</span>
+                  <input
+                    name="priceAmount"
+                    type="number"
+                    required
+                    min="1"
+                    placeholder="999"
+                    className="w-full bg-transparent py-4 text-sm focus:outline-none placeholder:text-gray-400 font-medium text-black"
+                    value={formData.priceAmount}
+                    onChange={handleChange}
+                  />
+                </div>
               </div>
-            )}
-          </div>
+              <div className="space-y-2">
+                <label className="text-[9px] font-sans font-medium tracking-[0.3em] text-[#FFD700] uppercase block">
+                  Currency
+                </label>
+                <select
+                  name="priceCurrency"
+                  className="w-full bg-gray-50 border-b border-gray-200 py-4 text-sm focus:outline-none focus:border-black transition-all font-medium text-black appearance-none cursor-pointer px-4"
+                  value={formData.priceCurrency}
+                  onChange={handleChange}
+                >
+                  <option value="USD">UNITED STATES DOLLAR (USD)</option>
+                  <option value="EUR">EUROPEAN EURO (EUR)</option>
+                  <option value="GBP">BRITISH POUND (GBP)</option>
+                </select>
+              </div>
+            </div>
 
-          {/* Submit */}
-          <div className="pt-6 space-y-4">
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-black hover:bg-gray-800 text-white font-extrabold text-[11px] uppercase tracking-[0.4em] py-4 transition-all duration-500 hover:tracking-[0.6em] active:scale-[0.98] shadow-2xl brand-font disabled:opacity-50 disabled:cursor-not-allowed rounded-sm"
-            >
-              {loading ? 'Uploading Drop...' : 'List Product'}
-            </button>
-            <button
-              type="button"
-              onClick={() => navigate('/seller/products')}
-              className="w-full text-gray-400 hover:text-black font-mono text-[10px] uppercase tracking-[0.3em] py-3 transition-all duration-300"
-            >
-              Cancel
-            </button>
+            {/* Submit Control */}
+            <div className="pt-10 space-y-6">
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full bg-black hover:bg-gray-800 text-white py-5 transition-all duration-700 active:scale-[0.98] shadow-2xl relative overflow-hidden group/btn disabled:opacity-50"
+              >
+                <div className="relative z-10 flex items-center justify-center gap-3">
+                  <span className="text-[11px] font-bold uppercase tracking-[0.4em] group-hover/btn:tracking-[0.6em] transition-all duration-500" style={{ fontFamily: '"Playfair Display", serif' }}>
+                    {loading ? 'Initializing...' : 'Manifest Drop'}
+                  </span>
+                </div>
+                <div className="absolute inset-0 bg-white/5 translate-x-[-100%] group-hover/btn:translate-x-0 transition-transform duration-700" />
+              </button>
+              
+              <button
+                type="button"
+                onClick={() => navigate('/seller/products')}
+                className="w-full text-center text-gray-400 hover:text-black font-mono text-[9px] uppercase tracking-[0.4em] transition-colors"
+              >
+                Cancel Protocol
+              </button>
+            </div>
           </div>
         </form>
       </main>
-
-      <style>{`
-        @keyframes marquee-vertical {
-          0% { transform: translateY(0); }
-          100% { transform: translateY(-50%); }
-        }
-      `}</style>
     </div>
   );
 };

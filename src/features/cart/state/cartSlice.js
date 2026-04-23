@@ -54,6 +54,7 @@ const cartSlice = createSlice({
   initialState: {
     items: [],
     loading: false,
+    updatingItemId: null,
     error: null,
   },
   reducers: {},
@@ -64,20 +65,44 @@ const cartSlice = createSlice({
       })
       .addCase(fetchCartAsync.fulfilled, (state, action) => {
         state.loading = false;
-        state.items = action.payload.items || [];
+        state.items = action.payload.items || action.payload.cart?.items || [];
       })
       .addCase(fetchCartAsync.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
+      .addCase(addToCartAsync.pending, (state) => {
+        state.loading = true;
+      })
       .addCase(addToCartAsync.fulfilled, (state, action) => {
+        state.loading = false;
         state.items = action.payload.cart.items;
+      })
+      .addCase(addToCartAsync.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(updateQuantityAsync.pending, (state, action) => {
+        state.updatingItemId = action.meta.arg.productId + (action.meta.arg.variantIndex || '');
       })
       .addCase(updateQuantityAsync.fulfilled, (state, action) => {
+        state.updatingItemId = null;
         state.items = action.payload.cart.items;
       })
+      .addCase(updateQuantityAsync.rejected, (state, action) => {
+        state.updatingItemId = null;
+        state.error = action.payload;
+      })
+      .addCase(removeFromCartAsync.pending, (state, action) => {
+        state.updatingItemId = action.meta.arg.productId + (action.meta.arg.variantIndex || '');
+      })
       .addCase(removeFromCartAsync.fulfilled, (state, action) => {
+        state.updatingItemId = null;
         state.items = action.payload.cart.items;
+      })
+      .addCase(removeFromCartAsync.rejected, (state, action) => {
+        state.updatingItemId = null;
+        state.error = action.payload;
       });
   },
 });

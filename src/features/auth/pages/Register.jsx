@@ -3,11 +3,13 @@ import fashionHero from '../../../assets/vibrant-hero.png';
 import { useAuth } from '../hook/useAuth';
 import { useNavigate, Navigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import { useToast } from '../../../components/Toast';
 
 const Register = () => {
   const { handelRegsiter } = useAuth()
   const navigate = useNavigate()
   const { user } = useSelector((state) => state.auth);
+  const { showToast } = useToast();
 
   const [formData, setFormData] = useState({
     fullName: '',
@@ -31,8 +33,14 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await handelRegsiter(formData)
-    navigate('/')
+    try {
+      await handelRegsiter(formData)
+      showToast('Registration successful. Welcome to Snitch.', 'success');
+      navigate('/')
+    } catch (error) {
+      console.error('Registration failed:', error);
+      showToast(error.message || 'Registration failed. Please try again.', 'error');
+    }
   };
 
   return (

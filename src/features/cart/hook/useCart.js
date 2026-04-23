@@ -3,7 +3,7 @@ import { addToCartAsync, fetchCartAsync, removeFromCartAsync, updateQuantityAsyn
 
 export const useCart = () => {
   const dispatch = useDispatch();
-  const { items, loading, error } = useSelector((state) => state.cart);
+  const { items, loading, updatingItemId, error } = useSelector((state) => state.cart);
 
   const handleAddToCart = (productId, variantIndex, quantity = 1) => {
     return dispatch(addToCartAsync({ productId, variantIndex, quantity }));
@@ -24,6 +24,7 @@ export const useCart = () => {
   return {
     items,
     loading,
+    updatingItemId,
     error,
     handleAddToCart,
     handleFetchCart,

@@ -4,12 +4,14 @@ import { useProduct } from '../hook/useProduct';
 import { useCart } from '../../cart/hook/useCart';
 import Navbar from '../../../components/Navbar';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useToast } from '../../../components/Toast';
 
 const ProductDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { productDetails, loading, handleFetchProductDetails } = useProduct();
   const { handleAddToCart } = useCart();
+  const { showToast } = useToast();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedVariant, setSelectedVariant] = useState(null);
   const [isAdding, setIsAdding] = useState(false);
@@ -19,10 +21,10 @@ const ProductDetails = () => {
     const variantIndex = productDetails.variants?.indexOf(selectedVariant);
     try {
       await handleAddToCart(id, variantIndex !== -1 ? variantIndex : undefined);
-      alert('Added to Selection');
+      showToast('Product added to your selection successfully', 'success');
     } catch (error) {
       console.error(error);
-      alert('Failed to add to Selection');
+      showToast('Failed to add product to cart. Please try again.', 'error');
     } finally {
       setIsAdding(false);
     }
@@ -231,7 +233,7 @@ const ProductDetails = () => {
                   className="w-full bg-[#1A1A1A] hover:bg-black text-white font-extrabold text-[11px] uppercase tracking-[0.5em] py-6 transition-all duration-500 hover:tracking-[0.7em] active:scale-[0.98] shadow-2xl brand-font rounded-sm relative group overflow-hidden disabled:opacity-50 disabled:grayscale cursor-pointer"
                 >
                   <span className="relative z-10">
-                    {selectedVariant && selectedVariant.stock === 0 ? 'Unit Offline' : 'Initialize Purchase'}
+                    {selectedVariant && selectedVariant.stock === 0 ? 'Unit Offline' : 'BUY NOW'}
                   </span>
                   <div className="absolute inset-0 bg-[#FFD700]/10 translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
                 </button>
@@ -241,7 +243,7 @@ const ProductDetails = () => {
                   disabled={isAdding}
                   className="w-full border-2 border-black hover:bg-black hover:text-white text-black font-extrabold text-[11px] uppercase tracking-[0.5em] py-5 transition-all duration-500 active:scale-[0.98] brand-font rounded-sm cursor-pointer"
                 >
-                  {isAdding ? 'Adding...' : 'Add to Selection'}
+                  {isAdding ? 'Adding...' : 'ADD TO CART'}
                 </button>
               </div>
 

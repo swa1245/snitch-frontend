@@ -6,7 +6,7 @@ import Navbar from '../../../components/Navbar';
 
 const Cart = () => {
   const navigate = useNavigate();
-  const { items, loading, handleFetchCart, handleRemoveFromCart, handleUpdateQuantity } = useCart();
+  const { items, loading, updatingItemId, handleFetchCart, handleRemoveFromCart, handleUpdateQuantity } = useCart();
 
   useEffect(() => {
     handleFetchCart();
@@ -14,7 +14,7 @@ const Cart = () => {
 
   const calculateTotal = () => {
     return items.reduce((total, item) => {
-      if (!item.product) return total;
+      if (!item.product || typeof item.product !== 'object') return total;
       const variant = item.variantIndex !== undefined ? item.product.variants?.[item.variantIndex] : null;
       const price = variant?.price?.amount || item.product.price?.amount || 0;
       return total + (price * item.quantity);
@@ -35,7 +35,7 @@ const Cart = () => {
       <div className="max-w-6xl mx-auto">
         <header className="mb-16 border-b border-gray-100 pb-8 flex justify-between items-end">
           <div>
-            <p className="text-[10px] font-mono text-gray-400 uppercase tracking-[0.5em] mb-4 italic">Your Selection</p>
+            <p className="text-[10px] font-mono text-gray-400 uppercase tracking-[0.5em] mb-4 italic">Your Cart</p>
             <h1 className="text-6xl font-black italic tracking-tighter uppercase" style={{ fontFamily: '"Playfair Display", serif' }}>
               The Cart
             </h1>
@@ -65,12 +65,13 @@ const Cart = () => {
                   const product = item.product;
                   if (!product) return null;
                   
-                  // Product might be populated (object) or just an ID (string)
                   const isPopulated = typeof product === 'object' && product._id;
                   const productId = isPopulated ? product._id : product;
+                  const itemKey = productId + (item.variantIndex || '');
+                  const isUpdating = updatingItemId === itemKey;
                   
                   const variant = (isPopulated && item.variantIndex !== undefined) ? product.variants?.[item.variantIndex] : null;
-                  const displayImage = variant?.images?.[0]?.url || (isPopulated ? product.images?.[0]?.url : 'https://placehold.co/400x600?text=PRODUCT');
+                  const displayImage = variant?.images?.[0]?.url || (isPopulated ? product.images?.[0]?.url : 'https://placehold.co/400x600?text=SYNCING');
                   const price = variant?.price?.amount || (isPopulated ? product.price?.amount : 0);
                   const currency = variant?.price?.currency || (isPopulated ? product.price?.currency : 'USD');
                   const attrs = variant?.attributes;
@@ -83,7 +84,7 @@ const Cart = () => {
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, x: -20 }}
-                      className="flex gap-8 group"
+                      className={`flex gap-8 group ${isUpdating ? 'opacity-50 pointer-events-none' : ''} transition-opacity duration-300`}
                     >
                       <div className="w-32 h-44 bg-[#F5F5F7] overflow-hidden rounded-sm shrink-0 shadow-sm transition-transform duration-500 group-hover:scale-[1.02]">
                         <img src={displayImage} alt={isPopulated ? product.title : 'Product'} className="w-full h-full object-cover grayscale-[0.2] group-hover:grayscale-0 transition-all duration-700" />
@@ -93,7 +94,11 @@ const Cart = () => {
                         <div className="flex justify-between items-start">
                           <div>
                             <p className="text-[8px] font-mono text-gray-400 uppercase tracking-widest mb-1">Serial NO: SN-{(productId || '').toString().slice(-6).toUpperCase()}</p>
-                            <h3 className="text-xl font-bold uppercase tracking-tight mb-2">{isPopulated ? product.title : 'Loading Product...'}</h3>
+                            <h3 className="text-xl font-bold uppercase tracking-tight mb-2">
+                              {isPopulated ? product.title : (
+                                <span className="animate-pulse text-gray-300 italic">Syncing...</span>
+                              )}
+                            </h3>
                             {variant && (
                               <p className="text-[10px] text-gray-500 uppercase tracking-widest">
                                 {attrsObj?.color && `Color: ${attrsObj.color}`} {attrsObj?.size && `| Size: ${attrsObj.size}`}
@@ -112,14 +117,25 @@ const Cart = () => {
                           <div className="flex items-center gap-4">
                             <button 
                               onClick={() => handleUpdateQuantity(productId, item.variantIndex, Math.max(1, item.quantity - 1))}
-                              className="w-8 h-8 flex items-center justify-center border border-gray-100 hover:border-black transition-all text-xs"
+                              disabled={isUpdating}
+                              className="w-8 h-8 flex items-center justify-center border border-gray-100 hover:border-black disabled:border-gray-50 transition-all text-xs"
                             >
                               -
                             </button>
-                            <span className="text-[10px] font-mono font-bold w-4 text-center">{item.quantity}</span>
+                            <div className="relative">
+                              <span className={`text-[10px] font-mono font-bold w-4 text-center transition-opacity ${isUpdating ? 'opacity-20' : 'opacity-100'}`}>
+                                {item.quantity}
+                              </span>
+                              {isUpdating && (
+                                <div className="absolute inset-0 flex items-center justify-center">
+                                  <div className="w-2 h-2 border border-black border-t-transparent rounded-full animate-spin" />
+                                </div>
+                              )}
+                            </div>
                             <button 
                               onClick={() => handleUpdateQuantity(productId, item.variantIndex, item.quantity + 1)}
-                              className="w-8 h-8 flex items-center justify-center border border-gray-100 hover:border-black transition-all text-xs"
+                              disabled={isUpdating}
+                              className="w-8 h-8 flex items-center justify-center border border-gray-100 hover:border-black disabled:border-gray-50 transition-all text-xs"
                             >
                               +
                             </button>

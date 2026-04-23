@@ -3,11 +3,13 @@ import fashionHero from '../../../assets/vibrant-hero.png';
 import { useAuth } from '../hook/useAuth';
 import { useNavigate, Navigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import { useToast } from '../../../components/Toast';
 
 const Login = () => {
   const { handelLogin } = useAuth();
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
+  const { showToast } = useToast();
 
   const [formData, setFormData] = useState({
     email: '',
@@ -30,9 +32,11 @@ const Login = () => {
     e.preventDefault();
     try {
       await handelLogin(formData);
+      showToast('Welcome back to the collection', 'success');
       navigate('/');
     } catch (error) {
       console.error('Login failed:', error);
+      showToast(error.message || 'Authentication failed. Please check your credentials.', 'error');
     }
   };
 

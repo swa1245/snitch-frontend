@@ -5,10 +5,14 @@ import App from './app/App.jsx'
 import { Provider } from 'react-redux'
 import { store } from './app/app.store.js'
 
+import { ToastProvider } from './components/Toast.jsx'
+
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <Provider store={store}>
-      <App />
+      <ToastProvider>
+        <App />
+      </ToastProvider>
     </Provider>
   </StrictMode>,
 )

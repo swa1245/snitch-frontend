@@ -1,6 +1,8 @@
 import { useDispatch, useSelector } from "react-redux";
 import {
     setSellerProducts,
+    setAllProducts,
+    setProductDetails,
     setLoading,
     setError,
     setCreateSuccess,
@@ -9,11 +11,13 @@ import {
 import {
     createProduct as createProductApi,
     getSellerProducts as getSellerProductsApi,
+    getAllProducts as getAllProductsApi,
+    getProductDetails as getProductDetailsApi,
 } from "../services/product.api.js";
 
 export const useProduct = () => {
     const dispatch = useDispatch();
-    const { sellerProducts, loading, error, createSuccess } = useSelector(
+    const { sellerProducts, allProducts, productDetails, loading, error, createSuccess } = useSelector(
         (state) => state.products
     );
 
@@ -46,12 +50,42 @@ export const useProduct = () => {
         }
     };
 
+    const handleFetchAllProducts = async () => {
+        dispatch(setLoading(true));
+        dispatch(setError(null));
+        try {
+            const data = await getAllProductsApi();
+            dispatch(setAllProducts(data.products));
+        } catch (err) {
+            dispatch(setError(err?.response?.data?.message || "Failed to fetch products."));
+        } finally {
+            dispatch(setLoading(false));
+        }
+    };
+
+    const handleFetchProductDetails = async (id) => {
+        dispatch(setLoading(true));
+        dispatch(setError(null));
+        try {
+            const data = await getProductDetailsApi(id);
+            dispatch(setProductDetails(data.product));
+        } catch (err) {
+            dispatch(setError(err?.response?.data?.message || "Failed to fetch product details."));
+        } finally {
+            dispatch(setLoading(false));
+        }
+    };
+
     return {
         sellerProducts,
+        allProducts,
+        productDetails,
         loading,
         error,
         createSuccess,
         handleCreateProduct,
         handleFetchSellerProducts,
+        handleFetchAllProducts,
+        handleFetchProductDetails,
     };
 };

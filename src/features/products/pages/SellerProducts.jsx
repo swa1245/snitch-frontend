@@ -29,7 +29,7 @@ const SellerProducts = () => {
           </p>
           <button
             onClick={() => navigate('/seller/products/create')}
-            className="bg-black hover:bg-gray-800 text-white font-bold text-[11px] uppercase tracking-[0.3em] px-6 py-3 transition-all duration-300 rounded-sm shadow-xl hover:scale-[1.02] active:scale-[0.98]"
+            className="bg-black hover:bg-gray-800 text-white font-bold text-[11px] uppercase tracking-[0.3em] px-6 py-3 transition-all duration-300 rounded-sm shadow-xl hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
             style={{ fontFamily: '"Playfair Display", serif' }}
           >
             + Initiate Drop
@@ -99,7 +99,7 @@ const SellerProducts = () => {
             </div>
             <button
               onClick={() => navigate('/seller/products/create')}
-              className="bg-black hover:bg-gray-800 text-white font-extrabold text-[10px] uppercase tracking-[0.3em] px-8 py-4 transition-all duration-300 rounded-sm"
+              className="bg-black hover:bg-gray-800 text-white font-extrabold text-[10px] uppercase tracking-[0.3em] px-8 py-4 transition-all duration-300 rounded-sm cursor-pointer"
             >
               + Create First Drop
             </button>
@@ -147,7 +147,7 @@ const ProductCard = ({ product, index }) => {
         
         {/* Drop Details on Hover */}
         <div className="absolute inset-0 p-6 flex flex-col justify-end translate-y-8 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
-          <button className="bg-white text-black py-3 text-[9px] uppercase tracking-[0.2em] font-bold hover:bg-[#FFD700] transition-colors">
+          <button className="bg-white text-black py-3 text-[9px] uppercase tracking-[0.2em] font-bold hover:bg-[#FFD700] transition-colors cursor-pointer">
             Edit Drop
           </button>
         </div>

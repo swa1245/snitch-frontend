@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { useAuth } from '../../auth/hook/useAuth';
+import Navbar from '../../../components/Navbar';
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -11,33 +12,7 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-[#F5F5F7] text-[#1A1A1A] font-sans selection:bg-black selection:text-white">
-      {/* Top Bar */}
-      <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-8 py-5 border-b border-gray-200 bg-white/80 backdrop-blur-sm">
-        <h1 className="text-xl font-black tracking-tighter uppercase italic">
-          Snitch<span className="text-gray-400">.</span>
-        </h1>
-        <div className="flex items-center gap-6">
-          {isSeller && (
-            <button
-              onClick={() => navigate('/seller/products')}
-              className="text-[10px] font-mono text-gray-400 hover:text-black uppercase tracking-[0.3em] transition-colors"
-            >
-              My Drops
-            </button>
-          )}
-          <div className="flex flex-col items-end">
-            <p className="text-[10px] font-mono text-gray-400 tracking-[0.3em] uppercase hidden md:block">
-              {user?.fullName || 'SNITCH USER'}
-            </p>
-            <button
-              onClick={handleLogout}
-              className="text-[8px] font-mono text-red-500/60 hover:text-red-500 uppercase tracking-widest transition-colors"
-            >
-              End Session [X]
-            </button>
-          </div>
-        </div>
-      </header>
+      <Navbar />
 
       {/* Hero */}
       <section className="min-h-screen flex flex-col items-center justify-center relative overflow-hidden px-6 text-center">
@@ -66,20 +41,21 @@ const Dashboard = () => {
                 <>
                   <button
                     onClick={() => navigate('/seller/products/create')}
-                    className="bg-black hover:bg-gray-800 text-white font-extrabold text-[11px] uppercase tracking-[0.4em] px-8 py-4 transition-all duration-500 hover:tracking-[0.6em] active:scale-[0.98] brand-font rounded-sm shadow-xl"
+                    className="bg-black hover:bg-gray-800 text-white font-extrabold text-[11px] uppercase tracking-[0.4em] px-8 py-4 transition-all duration-500 hover:tracking-[0.6em] active:scale-[0.98] brand-font rounded-sm shadow-xl cursor-pointer"
                   >
                     + New Drop
                   </button>
                   <button
                     onClick={() => navigate('/seller/products')}
-                    className="border border-gray-300 hover:border-black text-gray-400 hover:text-black font-mono text-[10px] uppercase tracking-[0.3em] px-8 py-4 transition-all duration-300 rounded-sm"
+                    className="border border-gray-300 hover:border-black text-gray-400 hover:text-black font-mono text-[10px] uppercase tracking-[0.3em] px-8 py-4 transition-all duration-300 rounded-sm cursor-pointer"
                   >
                     View My Drops
                   </button>
                 </>
               ) : (
                 <button
-                  className="bg-black hover:bg-gray-800 text-white font-extrabold text-[11px] uppercase tracking-[0.4em] px-8 py-4 transition-all duration-500 hover:tracking-[0.6em] active:scale-[0.98] brand-font rounded-sm shadow-xl"
+                  onClick={() => navigate('/shop')}
+                  className="bg-black hover:bg-gray-800 text-white font-extrabold text-[11px] uppercase tracking-[0.4em] px-8 py-4 transition-all duration-500 hover:tracking-[0.6em] active:scale-[0.98] brand-font rounded-sm shadow-xl cursor-pointer"
                 >
                   Explore Collection
                 </button>
@@ -87,7 +63,7 @@ const Dashboard = () => {
             ) : (
               <button
                 onClick={() => navigate('/login')}
-                className="bg-black hover:bg-gray-800 text-white font-extrabold text-[11px] uppercase tracking-[0.4em] px-8 py-4 transition-all duration-500 hover:tracking-[0.6em] active:scale-[0.98] brand-font rounded-sm shadow-xl"
+                className="bg-black hover:bg-gray-800 text-white font-extrabold text-[11px] uppercase tracking-[0.4em] px-8 py-4 transition-all duration-500 hover:tracking-[0.6em] active:scale-[0.98] brand-font rounded-sm shadow-xl cursor-pointer"
               >
                 Enter The House
               </button>

@@ -13,12 +13,57 @@ const CreateProduct = () => {
     priceAmount: '',
     priceCurrency: 'USD',
   });
+  const [variants, setVariants] = useState([]);
   const [previews, setPreviews] = useState([]);
   const [files, setFiles] = useState([]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleAddVariant = () => {
+    setVariants([...variants, { price: { amount: '', currency: formData.priceCurrency }, stock: '', attributes: { size: '', color: '' }, images: [], specificFiles: [] }]);
+  };
+
+  const handleRemoveVariant = (idx) => {
+    setVariants(variants.filter((_, i) => i !== idx));
+  };
+
+  const handleVariantFileUpload = (idx, e) => {
+    const selected = Array.from(e.target.files);
+    const newVariants = [...variants];
+    newVariants[idx].specificFiles = [...(newVariants[idx].specificFiles || []), ...selected];
+    setVariants(newVariants);
+  };
+
+  const handleRemoveVariantFile = (vIdx, fIdx) => {
+    const newVariants = [...variants];
+    newVariants[vIdx].specificFiles = newVariants[vIdx].specificFiles.filter((_, i) => i !== fIdx);
+    setVariants(newVariants);
+  };
+
+  const handleVariantImageToggle = (variantIdx, imageUrl) => {
+    const newVariants = [...variants];
+    const variantImages = newVariants[variantIdx].images || [];
+    if (variantImages.includes(imageUrl)) {
+      newVariants[variantIdx].images = variantImages.filter(url => url !== imageUrl);
+    } else {
+      newVariants[variantIdx].images = [...variantImages, imageUrl];
+    }
+    setVariants(newVariants);
+  };
+
+  const handleVariantChange = (idx, field, value, attributeKey) => {
+    const newVariants = [...variants];
+    if (field === 'price') {
+      newVariants[idx].price.amount = value;
+    } else if (field === 'stock') {
+      newVariants[idx].stock = value;
+    } else if (field === 'attributes') {
+      newVariants[idx].attributes[attributeKey] = value;
+    }
+    setVariants(newVariants);
   };
 
   const handleFileChange = (e) => {
@@ -42,7 +87,33 @@ const CreateProduct = () => {
     fd.append('description', formData.description);
     fd.append('priceAmount', formData.priceAmount);
     fd.append('priceCurrency', formData.priceCurrency);
+    
+    // Process variants to match model (attributes Map)
+    // Map preview URLs back to file indices for backend assignment
+    const processedVariants = variants.map(v => ({
+      ...v,
+      price: {
+        amount: Number(v.price.amount),
+        currency: v.price.currency
+      },
+      stock: Number(v.stock),
+      attributes: v.attributes,
+      imageIndices: (v.images || []).map(url => previews.indexOf(url)).filter(idx => idx !== -1)
+    }));
+    
+    fd.append('variants', JSON.stringify(processedVariants));
+    
     files.forEach((f) => fd.append('image', f));
+
+    // Append variant-specific files with unique fieldnames
+    variants.forEach((v, idx) => {
+      if (v.specificFiles && v.specificFiles.length > 0) {
+        v.specificFiles.forEach((file) => {
+          fd.append(`variant_images_${idx}`, file);
+        });
+      }
+    });
+
     const result = await handleCreateProduct(fd);
     if (result) {
       navigate('/seller/products');
@@ -84,7 +155,7 @@ const CreateProduct = () => {
         )}
 
         <form onSubmit={handleSubmit} className="flex flex-col lg:flex-row gap-16">
-          {/* Left Column: Media Configuration */}
+          {/* Left Column: Media Configuration & Variants */}
           <div className="lg:w-1/2 space-y-8">
             <div className="bg-white p-8 border border-gray-200 shadow-sm rounded-sm">
               <div className="flex justify-between items-center mb-8">
@@ -139,6 +210,133 @@ const CreateProduct = () => {
               )}
             </div>
 
+            {/* Variants Section */}
+            <div className="bg-white p-8 border border-gray-200 shadow-sm rounded-sm space-y-6">
+              <div className="flex justify-between items-center">
+                <h3 className="text-[10px] font-mono text-gray-400 tracking-[0.3em] uppercase">Variant Configurations</h3>
+                <button
+                  type="button"
+                  onClick={handleAddVariant}
+                  className="text-[9px] font-bold text-[#FFD700] uppercase tracking-widest border border-[#FFD700] px-4 py-2 hover:bg-[#FFD700] hover:text-black transition-all"
+                >
+                  + Add Variant
+                </button>
+              </div>
+
+              <div className="space-y-4">
+                {variants.map((v, idx) => (
+                  <div key={idx} className="p-6 border border-gray-100 bg-[#F9F9FB] space-y-4 relative group">
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveVariant(idx)}
+                      className="absolute top-4 right-4 text-gray-300 hover:text-red-500 text-[10px] font-bold transition-colors uppercase tracking-widest"
+                    >
+                      Delete
+                    </button>
+                    
+                    <div className="grid grid-cols-2 gap-4">
+                       <div className="space-y-1">
+                          <label className="text-[8px] font-mono text-gray-400 uppercase tracking-widest">Price Override</label>
+                          <input 
+                            type="number"
+                            placeholder="Price"
+                            className="w-full bg-transparent border-b border-gray-200 py-2 text-xs focus:outline-none"
+                            value={v.price.amount}
+                            onChange={(e) => handleVariantChange(idx, 'price', e.target.value)}
+                          />
+                       </div>
+                       <div className="space-y-1">
+                          <label className="text-[8px] font-mono text-gray-400 uppercase tracking-widest">Stock</label>
+                          <input 
+                            type="number"
+                            placeholder="Stock"
+                            className="w-full bg-transparent border-b border-gray-200 py-2 text-xs focus:outline-none"
+                            value={v.stock}
+                            onChange={(e) => handleVariantChange(idx, 'stock', e.target.value)}
+                          />
+                       </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                       <div className="space-y-1">
+                          <label className="text-[8px] font-mono text-gray-400 uppercase tracking-widest">Size</label>
+                          <input 
+                            type="text"
+                            placeholder="E.G. XL, 42, 6.5"
+                            className="w-full bg-transparent border-b border-gray-200 py-2 text-xs focus:outline-none uppercase"
+                            value={v.attributes.size}
+                            onChange={(e) => handleVariantChange(idx, 'attributes', e.target.value, 'size')}
+                          />
+                       </div>
+                       <div className="space-y-1">
+                          <label className="text-[8px] font-mono text-gray-400 uppercase tracking-widest">Color</label>
+                          <input 
+                            type="text"
+                            placeholder="E.G. NOIR, OCHRE"
+                            className="w-full bg-transparent border-b border-gray-200 py-2 text-xs focus:outline-none uppercase"
+                            value={v.attributes.color}
+                            onChange={(e) => handleVariantChange(idx, 'attributes', e.target.value, 'color')}
+                          />
+                       </div>
+                    </div>
+
+                    {/* Variant Assets Selection & Uploads */}
+                    <div className="space-y-4 pt-4 border-t border-gray-100">
+                       <div className="flex justify-between items-center">
+                          <label className="text-[8px] font-mono text-[#FFD700] uppercase tracking-[0.2em] block font-bold">Variant Visuals</label>
+                          <label className="cursor-pointer text-[8px] font-bold text-gray-400 hover:text-black uppercase tracking-widest border border-gray-200 px-2 py-1 rounded-sm">
+                             + Upload Specific
+                             <input 
+                               type="file" 
+                               multiple 
+                               className="hidden" 
+                               onChange={(e) => handleVariantFileUpload(idx, e)} 
+                             />
+                          </label>
+                       </div>
+
+                       {/* Local uploads for this variant */}
+                       {(v.specificFiles || []).length > 0 && (
+                          <div className="flex flex-wrap gap-2">
+                             {v.specificFiles.map((f, fIdx) => (
+                                <div key={fIdx} className="relative group/file w-10 h-10 bg-gray-200 rounded-sm overflow-hidden">
+                                   <div className="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 group-hover/file:opacity-100 transition-opacity">
+                                      <button type="button" onClick={() => handleRemoveVariantFile(idx, fIdx)} className="text-white text-[8px] font-bold uppercase">Del</button>
+                                   </div>
+                                   <p className="text-[6px] p-1 break-all text-center">{f.name}</p>
+                                </div>
+                             ))}
+                          </div>
+                       )}
+
+                       {/* Master Link Selection */}
+                       <div className="space-y-2">
+                          <p className="text-[7px] font-mono text-gray-300 uppercase tracking-widest">Link from Master Assets</p>
+                          {previews.length > 0 ? (
+                            <div className="flex gap-2 overflow-x-auto no-scrollbar py-1">
+                              {previews.map((src, pIdx) => (
+                                <div 
+                                  key={pIdx}
+                                  onClick={() => handleVariantImageToggle(idx, src)}
+                                  className={`shrink-0 w-10 h-10 rounded-sm border-2 transition-all cursor-pointer overflow-hidden ${v.images?.includes(src) ? 'border-[#FFD700] scale-105' : 'border-transparent opacity-40 hover:opacity-80'}`}
+                                >
+                                   <img src={src} className="w-full h-full object-cover" alt="v-asset" />
+                                </div>
+                              ))}
+                            </div>
+                          ) : (
+                            <p className="text-[7px] text-gray-300 italic uppercase">Upload master assets first to link</p>
+                          )}
+                       </div>
+                    </div>
+                  </div>
+                ))}
+                {variants.length === 0 && (
+                  <p className="text-[9px] text-gray-300 italic text-center py-4 uppercase tracking-widest">No variants defined. Using base configuration.</p>
+                )}
+              </div>
+            </div>
+
             <div className="p-8 bg-black text-white space-y-4 rounded-sm shadow-xl">
               <h4 className="text-[10px] font-mono text-[#FFD700] tracking-[0.3em] uppercase">Launch Strategy</h4>
               <p className="text-xs text-gray-400 leading-relaxed uppercase tracking-tight font-medium">
@@ -187,7 +385,7 @@ const CreateProduct = () => {
             <div className="grid grid-cols-2 gap-12">
               <div className="space-y-2">
                 <label className="text-[9px] font-sans font-medium tracking-[0.3em] text-[#FFD700] uppercase block">
-                  Price
+                  Base Price
                 </label>
                 <div className="flex items-center gap-2 border-b border-gray-200 focus-within:border-black transition-colors">
                   <span className="text-gray-400 font-mono text-sm leading-none">$</span>
@@ -232,7 +430,7 @@ const CreateProduct = () => {
                     {loading ? 'Initializing...' : 'Manifest Drop'}
                   </span>
                 </div>
-                <div className="absolute inset-0 bg-white/5 translate-x-[-100%] group-hover/btn:translate-x-0 transition-transform duration-700" />
+                <div className="absolute inset-0 bg-white/5 -translate-x-full group-hover/btn:translate-x-0 transition-transform duration-700" />
               </button>
               
               <button

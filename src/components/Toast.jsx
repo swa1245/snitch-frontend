@@ -21,7 +21,7 @@ export const ToastProvider = ({ children }) => {
   return (
     <ToastContext.Provider value={{ showToast }}>
       {children}
-      <div className="fixed bottom-12 right-6 md:right-12 z-[9999] flex flex-col gap-4 pointer-events-none">
+      <div className="fixed top-12 left-1/2 -translate-x-1/2 z-9999 flex flex-col gap-4 pointer-events-none">
         <AnimatePresence mode="popLayout">
           {toasts.map((toast) => (
             <motion.div
@@ -34,14 +34,14 @@ export const ToastProvider = ({ children }) => {
             >
               <div className={`
                 min-w-[320px] max-w-md px-6 py-4 rounded-sm shadow-[0_20px_50px_rgba(0,0,0,0.2)] 
-                backdrop-blur-xl border flex items-center justify-between gap-6
+                backdrop-blur-xl border flex items-center justify-between gap-6 relative overflow-hidden
                 ${toast.type === 'success' ? 'bg-black/90 border-[#FFD700]/30' : 'bg-red-950/90 border-red-500/30'}
               `}>
                 <div className="flex flex-col gap-1">
                   <p className="text-[10px] font-mono text-gray-400 uppercase tracking-[0.3em] italic">
                     {toast.type === 'success' ? 'System Protocol: Success' : 'System Protocol: Error'}
                   </p>
-                  <p className="text-[11px] font-bold text-white uppercase tracking-[0.1em]">
+                  <p className="text-[10px] font-bold text-white uppercase tracking-widest leading-none">
                     {toast.message}
                   </p>
                 </div>
@@ -58,7 +58,7 @@ export const ToastProvider = ({ children }) => {
                   initial={{ width: '100%' }}
                   animate={{ width: '0%' }}
                   transition={{ duration: 4, ease: "linear" }}
-                  className={`absolute bottom-0 left-0 h-[1px] ${toast.type === 'success' ? 'bg-[#FFD700]' : 'bg-red-500'}`}
+                  className={`absolute bottom-0 left-0 h-px ${toast.type === 'success' ? 'bg-[#FFD700]' : 'bg-red-500'}`}
                 />
               </div>
             </motion.div>
